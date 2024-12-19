@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benvenuto - Travel Miles</title>
+    <link rel="stylesheet" href="/css/home.css">
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo Travel Miles" id="logoImage">
+        </div>
+        <h1>Benvenuto, <span id="username"></span>!</h1>
+        <div class="header-buttons">
+            <button id="consultant-chat">Parla con un consulente</button>
+            <button id="view-details">Visualizza informazioni personali</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Esplora le nostre destinazioni</h2>
+            <p>Scopri le meraviglie del mondo con Travel Miles</p>
+        </section>
+
+        <section class="cities">
+            <h2>Seleziona una città</h2>
+            <div class="city-grid" id="cityGrid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Travel Miles. Tutti i diritti riservati.</p>
+    </footer>
+
+    <script>
+		//Recupera l'username dal backend
+		async function getUsernameFromSession() {
+		    try {
+		        const response = await fetch('http://localhost:8080/get-username');
+		        if (!response.ok) {
+		            throw new Error('Errore durante il recupero dell\'username');
+		        }
+		        return await response.text(); //restituisce l'username come testo solo dopo che la promise è stata risolta
+		    } catch (error) {
+		        console.error('Errore:', error);
+		        return null;
+		    }
+		}
+
+		//Recupero dal backend le città disponibili nel database
+		async function getCities() {
+		    try {
+		        const response = await fetch('http://localhost:8080/cities');
+		        if (!response.ok) {
+		            throw new Error('Errore durante il recupero delle città');
+		        }
+		        return await response.json(); //ottengo in formato json
+		    } catch (error) {
+		        console.error('Errore:', error);
+		    }
+		}
+
+
+		
+		//Creazione dinamica di elementi html tramite javascript
+		function createCityElement(city) {
+		    const cityItem = document.createElement('div');
+		    cityItem.className = 'city-item';
+
+		    const cityImage = document.createElement('img');
+		    cityImage.src = city.imagePath || '/images/img_non_disponibile.jpg';
+		    cityImage.alt = city.cityName; //alt è un attributo dell'elemento <img> che fornisce una descrizione dell'immagine
+		    cityItem.appendChild(cityImage);
+
+		    const cityName = document.createElement('span'); //<span> è un tag che non crea un nuovo "blocco" come <div>
+		    cityName.textContent = city.cityName;
+		    cityItem.appendChild(cityName);
+
+		    
+		    cityItem.addEventListener('click', () => {
+		        window.location.href = `city-details.html?cityName=${encodeURIComponent(city.cityName)}`;
+		    });
+
+		    return cityItem;
+		}
+		
+	
+		async function displayCities() {
+		    const cities = await getCities();
+		    const cityGrid = document.getElementById('cityGrid');
+		    cityGrid.innerHTML = ''; //Pulisco la griglia delle città per prevenire elementi duplicati dopo ogni richiamo della funzione displayCities()
+
+		    if (cities) {
+		        cities.forEach(city => {
+		            const cityItem = createCityElement(city);
+		            cityGrid.appendChild(cityItem);
+		        });
+		    } else {
+		        const message = document.createElement('div');
+		        message.textContent = "Nessuna città disponibile.";
+		        cityGrid.appendChild(message);
+		    }
+		}
+
+		
+		
+		//quando carica la pagina
+		window.onload = async () => {
+		    const username = await getUsernameFromSession();
+		    
+		    if (username) {
+		        //Memorizzo l'username nel localStorage
+		        localStorage.setItem('username', username);
+
+		        //Visualizzo l'username nella pagina
+		        document.getElementById('username').textContent = username;
+
+		
+		        document.getElementById('view-details').addEventListener('click', function() {
+		            window.location.href = `http://localhost:8080/user-details?username=${username}`;
+		        });
+
+		       
+		        document.getElementById('consultant-chat').addEventListener('click', function() {
+		            window.location.href = 'http://localhost:8080/chat-user.html';
+		        });
+
+		        //Visualizzo le città sulla pagina
+		        displayCities();
+		    } else {
+		        console.error('Nessun username trovato nella sessione.');
+		    }
+		};
+
+
+    </script>
+</body>
+</html>

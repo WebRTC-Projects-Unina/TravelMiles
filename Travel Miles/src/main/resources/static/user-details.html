@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informazioni Personali - Travel Miles</title>
+    <link rel="stylesheet" href="/css/user-details.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <img src="/images/logo.png" alt="Logo Travel Miles" id="logoImage">
+            </div>
+            <h1>Informazioni Personali</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="user-details-card">
+            <div class="user-info">
+                <div class="info-item">
+                    <label for="nome">Nome</label>
+                    <div class="info-content">
+                        <span id="nome"></span>
+                        <button onclick="modificaCampo('nome')" class="edit-btn">Modifica</button>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label for="cognome">Cognome</label>
+                    <div class="info-content">
+                        <span id="cognome"></span>
+                        <button onclick="modificaCampo('cognome')" class="edit-btn">Modifica</button>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label for="nickname">Nickname</label>
+                    <div class="info-content">
+                        <span id="nickname"></span>
+                        <button onclick="modificaCampo('nickname')" class="edit-btn">Modifica</button>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label for="email">Email</label>
+                    <div class="info-content">
+                        <span id="email"></span>
+                        <button onclick="modificaCampo('email')" class="edit-btn">Modifica</button>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label for="password">Password</label>
+                    <div class="info-content">
+                        <span id="password">********</span>
+                        <button onclick="modificaCampo('password')" class="edit-btn">Modifica</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="back-button" class="back-button">Torna alla Homepage</button>
+        </div>
+
+        <div id="modifica-form" class="modal">
+            <div class="modal-content">
+                <h2>Modifica <span id="campo-da-modificare"></span></h2>
+                <form id="form-modifica" method="POST">
+                    <input type="text" id="nuovo-valore" required>
+                    <input type="hidden" id="campo-nome" value="">
+                    <input type="hidden" id="username" value="">
+                    <div class="form-buttons">
+                        <button type="submit" class="save-btn">Salva</button>
+                        <button type="button" onclick="nascondiForm()" class="cancel-btn">Annulla</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Travel Miles. Tutti i diritti riservati.</p>
+    </footer>
+
+    <script>
+        
+        function modificaCampo(campo) {
+            const modificaForm = document.getElementById('modifica-form');
+            const nuovoValoreInput = document.getElementById('nuovo-valore');
+            document.getElementById('campo-da-modificare').innerText = campo;
+            document.getElementById('campo-nome').value = campo;
+
+           
+            if (campo === 'password') {
+                nuovoValoreInput.type = 'password';
+                nuovoValoreInput.placeholder = 'Inserisci una nuova password';
+                nuovoValoreInput.value = '';
+            } else {
+                nuovoValoreInput.type = 'text';
+                nuovoValoreInput.placeholder = 'Inserisci il nuovo valore';
+                nuovoValoreInput.value = document.getElementById(campo).textContent;
+            }
+
+            modificaForm.style.display = 'flex';
+        }
+
+        
+        function nascondiForm() {
+            document.getElementById('modifica-form').style.display = 'none';
+        }
+
+        //recupero dettagli dell'utente dal database 
+        function loadUserDetails() {
+            fetch('/get-user-details') 
+                .then(response => response.json())
+                .then(userDetails => {
+                    document.getElementById('nome').textContent = userDetails.nome;
+                    document.getElementById('cognome').textContent = userDetails.cognome;
+                    document.getElementById('nickname').textContent = userDetails.nickname;
+                    document.getElementById('email').textContent = decodeURIComponent(userDetails.email);
+                    document.getElementById('username').value = userDetails.username;
+                })
+                .catch(error => {
+                    console.error('Errore nel recupero dei dati:', error);
+                });
+        }
+
+        //quando la pagina è caricata allora recupero i dati dell'utente
+        window.onload = loadUserDetails;
+
+        //Invio eventuali dati modificati per salvarli sul database
+        document.getElementById('form-modifica').onsubmit = function(event) {
+            event.preventDefault();
+
+            const campo = document.getElementById('campo-nome').value;
+            const nuovoValore = encodeURIComponent(document.getElementById('nuovo-valore').value);
+            const username = document.getElementById('username').value;
+
+
+            //Richiesta HTTP per aggiornare i dati (AJAX)
+            var req = new XMLHttpRequest();
+            req.open("POST", "/modifica", true);
+            req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            req.onload = function() {
+                if (req.status === 200) {
+                    alert(req.responseText);
+					const valoreDecodificato = decodeURIComponent(nuovoValore)
+                    if (campo !== 'password') {
+                        document.getElementById(campo).textContent = valoreDecodificato;
+                    }
+                    nascondiForm();
+                } else {
+                    alert("Errore nell'aggiornamento.");
+                }
+            };
+            req.onerror = function() {
+                alert("Errore nella richiesta.");
+            };
+            req.send(`campo=${campo}&valore=${nuovoValore}&username=${username}`);
+        };
+
+
+        const username = localStorage.getItem('username');
+        document.getElementById('back-button').addEventListener('click', function() {
+            window.location.href = `home.html?username=${username}`;
+        });
+    </script>
+</body>
+</html>

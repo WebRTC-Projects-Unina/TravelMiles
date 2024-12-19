@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Utente</title>
+    <link rel="stylesheet" href="/css/loginStyle.css">
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+
+</head>
+<body>
+    <h1>Effettua il login</h1>
+    <div class="form-container">
+        <form name="LoginForm" method="POST" action="http://localhost:8080/login">
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Accedi</button>
+            <a href="http://localhost:8080/register.html">Non hai un account? Registrati</a>
+        </form>
+    </div>
+		
+</body>
+</html>

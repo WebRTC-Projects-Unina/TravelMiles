@@ -1,0 +1,128 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #FAFAFA;
+    color: #6a5acd;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 10px;
+    background-color: #FAFAFA;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#logoImage {
+    height: 280px;
+}
+
+h1, h2 {
+    color: #6a5acd;
+    text-align: center;
+    margin: 0 0 20px 0;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    background-color: #6a5acd;
+    color: #FAFAFA;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #5a4ac9;
+}
+
+main {
+    padding: 30px 20px;
+}
+
+.hero {
+    background-color: #6a5acd;
+    color: #FAFAFA;
+    padding: 50px 20px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.hero h2 {
+    color: #FAFAFA;
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+}
+
+.consultant-section {
+    max-width: 800px;
+    margin: 30px auto;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.consultant-section h2 {
+    color: #6a5acd;
+    margin-bottom: 20px;
+}
+
+.consultant-section button {
+    font-size: 18px;
+    padding: 15px 30px;
+    margin-top: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #FAFAFA;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .header-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .consultant-section {
+        padding: 20px;
+    }
+}
