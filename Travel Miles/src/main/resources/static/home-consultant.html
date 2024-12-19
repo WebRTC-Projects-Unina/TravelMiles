@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profilo Consulente Viaggi</title>
+    <link rel="stylesheet" href="/css/home-consultant.css" />
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+  </head>
+  <body>
+	<header>
+	        <div class="logo">
+	            <img src="images/logo.png" alt="Logo Travel Miles" id="logoImage">
+	        </div>
+	        <h1>Benvenuto, <span id="username"></span>!</h1>
+	        <div class="header-buttons">
+	            <button id="view-details">Visualizza informazioni personali</button>
+	        </div>
+	    </header>
+
+	    <main>
+	        <section class="hero">
+	            <h2>Home Consulente Viaggi</h2>
+	            <p>Gestisci le richieste dei nostri clienti</p>
+	        </section>
+
+	        <section class="consultant-section">
+	            <h2>Ricevi le chat di un utente</h2>
+	            <div id="messaggi">
+	                <button onclick="window.location.href='chat-consultant.html';">Ricevi chat dai nostri utenti!</button>
+	            </div>
+	        </section>
+	    </main>
+
+	    <footer>
+	        <p>&copy; 2024 Travel Miles. Tutti i diritti riservati.</p>
+	    </footer>
+		
+		
+		<script>
+			
+			//funzione asincrona, il browser non viene "bloccato" e la pagina rimane interattiva mentre in "background"" prelevo l'username
+			async function getUsernameFromSession() {
+			    try {
+			        const response = await fetch('http://localhost:8080/get-consultant');
+			        if (!response.ok) {
+			            throw new Error('Errore durante il recupero dell\'username del consulente');
+			        }
+			        return await response.text(); //restituisce l'username come testo solo dopo che la promise è stata risolta
+			    } catch (error) {
+			        console.error('Errore:', error);
+			        return null;
+			    }
+				}
+			
+				
+			//quando la pagina è caricata chiamo la funzione asincrona
+			window.onload = async () => {
+				//Inserisco in const username il response.text() che restituisce getUsernameFromSession()
+			    const username = await getUsernameFromSession();
+			    
+			    if (username) {
+			        //memorizzo l'username nel localStorage
+			        localStorage.setItem('username', username);
+
+			        //visualizzo l'username nella pagina
+			        document.getElementById('username').textContent = username;
+
+			        
+			        document.getElementById('view-details').addEventListener('click', function() {
+			            window.location.href = `http://localhost:8080/consultant-details?username=${username}`;
+			        });
+
+
+			    } else {
+			        console.error('Nessun username consulente trovato nella sessione.');
+			    }
+			};
+
+		 
+    </script>
+  </body>
+</html>

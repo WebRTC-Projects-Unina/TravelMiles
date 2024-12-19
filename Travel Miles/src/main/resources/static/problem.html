@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="css/problem.css">
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+</head>
+<body>
+	<div class="error-container">
+	        <h1>C'è un problema</h1>
+	        <h2 id="error-message"></h2>
+	        <p>Tra poco verrai reindirizzato alla home page</p>
+	</div>
+
+    <script>
+		//prelevo l'eventuale parametro che passo alla funzione dalla query string(window.location.search)
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        //chiamo la funzione orecedente passando 'error' e se c'è lo visualizzo
+        const errorMessage = getQueryParam('error');
+        if (errorMessage) {
+            document.getElementById('error-message').textContent = errorMessage;
+        }
+		
+		setTimeout(function() {
+            window.location.href = "index.html";
+        }, 3000);
+    </script>
+</body>
+</html>

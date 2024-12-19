@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultato Registrazione</title>
+    <style>
+   
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4; 
+        }
+
+
+        h1 {
+            color: #6a5acd; 
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+
+        .button-container {
+            display: flex;
+            justify-content: center; 
+            margin: 20px 0; 
+            gap: 10px; 
+        }
+
+
+        #view-details,
+        #consultant-chat {
+            display: block;
+            background-color: #6a5acd;
+            color: white; 
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s; 
+        }
+
+        
+        #view-details:hover,
+        #consultant-chat:hover {
+            background-color: #5b4b99; 
+        }
+
+
+        .message-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .message-container p {
+            font-size: 20px;
+            color: #6a5acd;
+        }
+    </style>
+    <script>
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function handleRedirect(message) {
+            if (message === 'Utente registrato con successo!') {
+                setTimeout(function() {
+                    window.location.href = '/login.html';
+                }, 2000);
+            } else {
+                setTimeout(function() {
+                    window.location.href = '/register.html';
+                }, 2000);
+            }
+        }
+
+        window.onload = function() {
+            const message = getQueryParam('message');
+            document.getElementById('message').textContent = message;
+            handleRedirect(message);
+        };
+    </script>
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+</head>
+<body>
+    <div class="message-container">
+        <h1>Risultato della Registrazione</h1>
+        <p id="message"></p>
+    </div>
+</body>
+</html>

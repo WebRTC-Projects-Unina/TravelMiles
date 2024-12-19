@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettagli della città</title>
+    <link rel="stylesheet" href="/css/city-details.css">
+	<link rel="icon" type="image/png" href="images/TMfavicon.png">
+</head>
+<body>
+	<header>
+	    <div class="logo">
+	        <img src="images/logo.png" alt="Travel Miles Logo" id="logoImage">
+	    </div>
+	    <h1 id="cityName"></h1>
+	    <div class="header-buttons">
+	        <button id="backButton">Torna indietro</button>
+	        <button onclick="window.location.href='chat-user.html'">Chatta con un nostro consulente!</button>
+	    </div>
+	</header>
+
+	<main>		
+		<div class="city-details">
+		    <div class="city-image-container">
+		        <img id="cityImage" src="" alt="Immagine della città">
+		    </div>
+			<div id="weatherContainer" class="weather-info">
+			    <h2>Meteo</h2>
+			    <p id="temperature">Temperatura: </p>
+			    <p id="weatherDescription"></p>
+			    <div id="sunInfo">
+			        <h3>Alba e Tramonto</h3>
+			        <p>Alba: <span id="sunrise"></span></p>
+			        <p>Tramonto: <span id="sunset"></span></p>
+			    </div>
+			    <div id="precipitationInfo">
+			        <h3>Precipitazioni</h3>
+			        <p id="precipitation"></p>
+			    </div>
+			</div>
+			
+	</main>
+        
+        <div id="commentsContainer">
+            <div id="commentsGrid"></div>
+        </div>
+    </div>
+    
+    <div id="commentFormContainer">
+        <form id="commentForm">
+            <textarea id="commentText" name="commentText" placeholder="Scrivi il tuo commento"></textarea>
+            <button type="submit">Invia commento</button>
+        </form>
+    </div>
+
+    <div id="editCommentModal" style="display: none;">
+        <textarea id="editCommentText" placeholder="Modifica il tuo commento"></textarea>
+        <button id="saveCommentButton">Salva</button>
+        <button id="cancelEditButton">Annulla</button>
+    </div>
+	
+	
+	<div id="replyCommentModal" style="display: none;">
+	    <textarea id="replyCommentText" placeholder="Rispondi al commento"></textarea>
+	    <button id="saveReplyCommentButton">Salva</button>
+	    <button id="cancelReplyCommentButton">Annulla</button>
+	</div>
+
+	
+    <script>
+		
+		
+        const urlParams = new URLSearchParams(window.location.search);
+        const cityName = urlParams.get('cityName');
+
+        document.getElementById('cityName').textContent = cityName;
+        document.getElementById('cityImage').src = `/images/${cityName.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+
+        document.getElementById('backButton').addEventListener('click', () => {
+            window.history.back();
+        });
+
+		
+		
+		
+		
+		
+        async function getMainComments() {
+            try {
+                const response = await fetch(`http://localhost:8080/cityComments/${cityName}/comments`);
+                if (!response.ok) throw new Error('Errore nel recupero dei commenti principali');
+                return await response.json();
+            } catch (error) {
+                console.error('Errore:', error);
+            }
+        }
+		
+		
+		
+		
+
+        async function getReplies() {
+            try {
+                const response = await fetch(`http://localhost:8080/cityComments/${cityName}/replies`);
+                if (!response.ok) throw new Error('Errore nel recupero delle risposte');
+                return await response.json();
+            } catch (error) {
+                console.error('Errore:', error);
+            }
+        }
+		
+		
+		
+		
+		
+		
+		
+
+		//Crea commento e risposte
+		//Possiamo dire che è un principio simile alla creazione degli elementi città nella pagina home
+		function createCommentElement(comment, allReplies) {
+			
+		    const commentElement = document.createElement('div');
+		    commentElement.classList.add('comment');
+		    commentElement.setAttribute('data-comment-id', comment.commentId);
+
+		    const commentAuthor = document.createElement('h3');
+		    commentAuthor.textContent = comment.username || 'Autore sconosciuto';
+		    commentElement.appendChild(commentAuthor);
+
+		    const commentText = document.createElement('p');
+		    commentText.textContent = comment.commentText;
+		    commentElement.appendChild(commentText);
+
+		    const editButton = document.createElement('button');
+		    editButton.textContent = 'Modifica';
+		    editButton.addEventListener('click', () => openEditModal(comment));
+		    commentElement.appendChild(editButton);
+
+			const replyButton = document.createElement('button');
+			replyButton.textContent = 'Rispondi';
+			replyButton.addEventListener('click', () => openReplyModal(comment.commentId));
+			commentElement.appendChild(replyButton);
+
+
+		    const commentReplies = allReplies.filter(reply => reply.parentComment && reply.parentComment.commentId === comment.commentId);
+		    if (commentReplies.length > 0) {
+		        const repliesContainer = document.createElement('div');
+		        repliesContainer.classList.add('replies');
+		        commentReplies.forEach(reply => {
+		            const replyItem = createCommentElement(reply, allReplies);
+		            repliesContainer.appendChild(replyItem);
+		        });
+		        commentElement.appendChild(repliesContainer);
+		    }
+
+		    return commentElement;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		async function displayComments() {
+		    const mainComments = await getMainComments();
+		    const replies = await getReplies();
+		    const commentsGrid = document.getElementById('commentsGrid');
+		    commentsGrid.innerHTML = '';
+
+		    if (mainComments && mainComments.length > 0) {
+		        const mainCommentsTitle = document.createElement('h2');
+		        mainCommentsTitle.textContent = "Commenti";
+		        commentsGrid.appendChild(mainCommentsTitle);
+
+		        mainComments.forEach(comment => {
+		            const commentItem = createCommentElement(comment, replies); 
+		            commentsGrid.appendChild(commentItem);
+		        });
+		    } else {
+		        const message = document.createElement('div');
+		        message.textContent = "Nessun commento disponibile.";
+		        commentsGrid.appendChild(message);y
+		    }
+		}
+		
+		
+		
+		
+		
+		
+
+
+        function openEditModal(comment) {
+            const modal = document.getElementById('editCommentModal');
+            modal.style.display = 'block';
+            document.getElementById('editCommentText').value = comment.commentText;
+
+            document.getElementById('saveCommentButton').onclick = function () {
+                saveCommentEdit(comment.commentId);
+            };
+        }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		function openReplyModal(parentCommentId) {
+		    const modal = document.getElementById('replyCommentModal');
+		    modal.style.display = 'block';
+		    
+		    modal.setAttribute('data-parent-comment-id', parentCommentId); //associo l'ID del commento "genitore"" al modal
+			
+		    document.getElementById('replyCommentText').value = '';
+		}
+		
+		
+		
+		
+		
+		
+
+
+        //Chiudi modulo modifica
+        document.getElementById('cancelEditButton').addEventListener('click', () => {
+            document.getElementById('editCommentModal').style.display = 'none';
+        });
+		
+		//Chiudi modulo di risposta
+		document.getElementById('cancelReplyCommentButton').addEventListener('click', () => {
+		    document.getElementById('replyCommentModal').style.display = 'none';
+		});
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+        //Invia risposta
+		document.getElementById('saveReplyCommentButton').addEventListener('click', async () => {
+		    const replyText = document.getElementById('replyCommentText').value;
+		    const parentCommentId = document.getElementById('replyCommentModal').getAttribute('data-parent-comment-id');
+
+		    if (!replyText.trim()) {
+		        alert('La risposta non può essere vuota.');
+		        return;
+		    }
+		    try {
+		        const response = await fetch(`http://localhost:8080/cityComments/${cityName}/addReply/${parentCommentId}`, {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/x-www-form-urlencoded',
+					},
+		            body: new URLSearchParams({
+		                commentText: replyText
+		            })
+		        });
+
+				
+		        if (response.ok) {
+		            alert('Risposta inviata con successo!');
+		            document.getElementById('replyCommentText').value = '';
+		            displayComments();
+		            document.getElementById('replyCommentModal').style.display = 'none';
+		        } else {
+		            alert('Errore nell\'invio della risposta');
+		        }
+		    } catch (error) {
+		        console.error('Errore:', error);
+		    }
+		});
+
+
+		
+		
+		
+		
+		
+		
+		
+		
+
+        //Salva modifica al commento
+        async function saveCommentEdit(commentId) {
+            const editedComment = document.getElementById('editCommentText').value;
+
+            try {
+                const response = await fetch(`http://localhost:8080/cityComments/${commentId}/edit`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ commentText: editedComment })
+                });
+
+                if (response.ok) {
+                    alert('Commento modificato con successo!');
+                    displayComments();
+                    document.getElementById('editCommentModal').style.display = 'none';
+                } else {
+                    alert('Errore nella modifica del commento');
+                }
+            } catch (error) {
+                console.error('Errore:', error);
+            }
+        };
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	     //Invia commento
+		 const commentForm = document.getElementById('commentForm');
+		        commentForm.addEventListener('submit', async (e) => {
+		            e.preventDefault();
+		            const commentText = document.getElementById('commentText').value;
+
+					if (commentText===""){
+						alert('Commento vuoto, dovrsti scrivere per commmentare.');
+						return;
+					}
+		            try {
+		                const response = await fetch(`http://localhost:8080/cityComments/${cityName}/addComment`, {
+		                    method: 'POST',
+		                    headers: {
+		                        'Content-Type': 'application/x-www-form-urlencoded',
+							},
+		                    body: new URLSearchParams({
+		                        commentText: commentText
+		                    })
+		                });
+
+		                if (response.ok) {
+		                    alert('Commento inviato con successo!');
+		                    document.getElementById('commentText').value = '';
+		                    displayComments();
+		                } else {
+		                    const errorText = await response.text();
+		                    alert('Errore: ' + errorText);
+		                }
+		            } catch (error) {
+		                console.error('Errore durante l\'invio del commento:', error);
+		            }
+		        });
+		
+						
+				
+				
+        displayComments();
+    </script>
+	
+	<script src="/js/meteoAPI.js"></script>
+</body>
+</html>

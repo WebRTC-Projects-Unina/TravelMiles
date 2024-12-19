@@ -1,0 +1,121 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #FAFAFA;
+  color: #6a5acd;
+}
+
+.logo {
+  text-align: center;
+}
+
+#logoImage {
+  height: 180px;
+  margin-bottom: 10px;
+}
+
+/* Pulsanti */
+button {
+  background-color: #6a5acd;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #5a4ac9; 
+  transform: scale(1.05);
+}
+
+
+input[type="file"],
+input[type="text"] {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #6a5acd;
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+
+#chatOutput {
+  width: 100%;
+  height: 250px; 
+  border: 2px solid #6a5acd; 
+  border-radius: 15px; 
+  padding: 15px; 
+  margin-top: 10px;
+  background-color: #f9f9ff; 
+  color: #6a5acd; 
+  overflow-y: auto;
+  box-sizing: border-box;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+#fileLinks {
+  margin-top: 20px;
+}
+
+#fileLinks a {
+  color: #6a5acd;
+  text-decoration: none;
+}
+
+#fileLinks a:hover {
+  text-decoration: underline;
+}
+
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white; 
+  border-radius: 20px; 
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  color: #6a5acd;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #6a5acd;
+}
+
+
+footer {
+  margin-top: 30px;
+  text-align: center;
+  color: #6a5acd;
+  font-size: 14px;
+}
+
+#chatInput {
+  width: 100%;
+  height: 80px; 
+  padding: 15px; 
+  font-size: 16px; 
+  border: 2px solid #6a5acd;
+  border-radius: 12px; 
+  resize: vertical;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #6a5acd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
